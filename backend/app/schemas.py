@@ -56,6 +56,27 @@ class ProductOut(ProductBase):
         from_attributes = True
 
 
+class HomeContentBase(BaseModel):
+    badge: str = "Seu lugar preferido"
+    title: str = "Arena01 é o seu lugar preferido para praticar futevôlei, beach tennis e vôlei."
+    description: str = "Sua experiência premium em Jundiaí, Itatiba e Campinas, com energia, comunidade e alto nível em cada modalidade."
+    cta_primary: str = "Agendar visita"
+    cta_secondary: str = "Ver loja"
+    section_title: str = "Uma marca premium desenhada para a cultura esportiva local"
+    section_description: str = "Com tecnologia, conforto e identidade forte, a Arena01 nasceu para conectar pessoas, competição e comunidade em cada unidade."
+
+
+class HomeContentCreate(HomeContentBase):
+    pass
+
+
+class HomeContentOut(HomeContentBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
 class LeadBase(BaseModel):
     name: str
     email: EmailStr

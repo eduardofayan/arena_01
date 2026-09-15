@@ -38,6 +38,21 @@ class Product(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class HomeContent(Base):
+    __tablename__ = "home_content"
+
+    id = Column(Integer, primary_key=True, index=True)
+    badge = Column(String(120), nullable=False, default="Seu lugar preferido")
+    title = Column(Text, nullable=False, default="Arena01 é o seu lugar preferido para praticar futevôlei, beach tennis e vôlei.")
+    description = Column(Text, nullable=False, default="Sua experiência premium em Jundiaí, Itatiba e Campinas, com energia, comunidade e alto nível em cada modalidade.")
+    cta_primary = Column(String(120), nullable=False, default="Agendar visita")
+    cta_secondary = Column(String(120), nullable=False, default="Ver loja")
+    section_title = Column(Text, nullable=False, default="Uma marca premium desenhada para a cultura esportiva local")
+    section_description = Column(Text, nullable=False, default="Com tecnologia, conforto e identidade forte, a Arena01 nasceu para conectar pessoas, competição e comunidade em cada unidade.")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
 class Lead(Base):
     __tablename__ = "leads"
 

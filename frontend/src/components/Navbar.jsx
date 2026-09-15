@@ -10,15 +10,15 @@ const menu = [
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#060816]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#c71464]/50 bg-[#090909]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-sky-400 text-lg font-black text-white shadow-glow">
-            A1
+          <div className="flex h-10 w-10 items-center justify-center bg-gradient-to-br from-[#30999d] via-[#8d80ad] to-[#c71464] text-lg font-black text-white shadow-glow" style={{ clipPath: 'polygon(36% 0, 100% 0, 100% 100%, 0 100%, 0 62%)' }}>
+            01
           </div>
           <div>
-            <div className="text-lg font-black tracking-tight">Arena01</div>
-            <div className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Futevôlei • Beach Tennis • Vôlei</div>
+            <div className="brand-wordmark text-2xl font-black leading-none">arena<sup className="ml-0.5 text-[10px] text-[#30999d]">01</sup></div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/65">Futevôlei • Beach Tennis • Vôlei</div>
           </div>
         </Link>
 
@@ -43,7 +43,7 @@ export default function Navbar() {
           </button>
           <Link
             to="/#captação"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#30999d] to-[#c71464] px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02]"
           >
             Fale com a gente
             <ArrowRight className="h-4 w-4" />

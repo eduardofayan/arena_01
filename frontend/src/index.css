@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Inter', sans-serif;
-  color: #eff6ff;
-  background: #060816;
+  font-family: 'Crapaud', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+  color: #ffffff;
+  background: #090909;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -22,10 +22,21 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(124, 58, 237, 0.25), transparent 28%),
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), transparent 20%),
-    #060816;
-  color: #eff6ff;
+    linear-gradient(135deg, rgba(48, 153, 157, 0.08), transparent 32%),
+    linear-gradient(315deg, rgba(199, 20, 100, 0.08), transparent 35%),
+    #090909;
+  color: #ffffff;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 0 47%, rgba(199, 20, 100, 0.12) 47.1% 47.25%, transparent 47.35%),
+    linear-gradient(315deg, transparent 0 21%, rgba(48, 153, 157, 0.1) 21.1% 21.25%, transparent 21.35%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 * {
@@ -33,14 +44,15 @@ body {
 }
 
 ::selection {
-  background: rgba(168, 85, 247, 0.35);
+  background: rgba(199, 20, 100, 0.6);
 }
 
 .glass {
-  background: rgba(10, 15, 26, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: rgba(20, 20, 22, 0.78);
+  border: 1px solid rgba(199, 20, 100, 0.45);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  border-radius: 4px !important;
 }
 
 .grid-pattern {
@@ -50,19 +62,60 @@ body {
 
 .hero-orb {
   position: absolute;
-  filter: blur(90px);
-  opacity: 0.55;
+  filter: none;
+  opacity: 0.95;
   pointer-events: none;
+  border: 2px solid #c71464;
+  background: transparent !important;
+  border-radius: 0 !important;
+  clip-path: polygon(0 24%, 24% 0, 100% 0, 100% 76%, 76% 100%, 0 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #f8fafc 0%, #c4b5fd 25%, #7dd3fc 60%, #a7f3d0 100%);
+  background: linear-gradient(105deg, #30999d 0%, #847fae 43%, #c71464 68%, #30999d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .neon-button {
-  background: linear-gradient(135deg, rgba(124,58,237,0.9), rgba(56,189,248,0.9));
-  box-shadow: 0 15px 35px rgba(124,58,237,0.35);
+  background: linear-gradient(105deg, #30999d, #c71464);
+  box-shadow: 0 14px 30px rgba(199, 20, 100, 0.28);
+}
+
+.brand-frame {
+  position: relative;
+}
+
+.brand-frame::before,
+.brand-frame::after {
+  content: '';
+  position: absolute;
+  width: 9rem;
+  height: 9rem;
+  border: 2px solid #c71464;
+  pointer-events: none;
+}
+
+.brand-frame::before {
+  top: -1.25rem;
+  left: -1.25rem;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.brand-frame::after {
+  right: -1.25rem;
+  bottom: -1.25rem;
+  border-top: 0;
+  border-left: 0;
+}
+
+.brand-wordmark {
+  font-family: 'Crapaud', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+  background: linear-gradient(105deg, #30999d, #8d80ad 43%, #c71464 67%, #30999d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0;
 }

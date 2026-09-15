@@ -1,10 +1,41 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, MapPin, Sparkles, CalendarDays, Ticket, Send } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Pill from '../components/Pill';
 import SectionHeading from '../components/SectionHeading';
 import { arenaData } from '../data/sites';
+
+const defaultContent = {
+  badge: 'Seu lugar preferido',
+  title: 'Arena01 é o seu lugar preferido para praticar futevôlei, beach tennis e vôlei.',
+  description: 'Sua experiência premium em Jundiaí, Itatiba e Campinas, com energia, comunidade e alto nível em cada modalidade.',
+  cta_primary: 'Agendar visita',
+  cta_secondary: 'Ver loja',
+  section_title: 'Uma marca premium desenhada para a cultura esportiva local',
+  section_description: 'Com tecnologia, conforto e identidade forte, a Arena01 nasceu para conectar pessoas, competição e comunidade em cada unidade.',
+};
+
+const ballStages = [
+  {
+    name: 'Futevôlei',
+    accent: 'rgba(167, 139, 250, 0.8)',
+    glow: 'rgba(139, 92, 246, 0.5)',
+    gradient: 'radial-gradient(circle at 30% 30%, #f8fafc 0%, #e2e8f0 18%, #c4b5fd 36%, #7c3aed 75%, #3b0764 100%)',
+  },
+  {
+    name: 'Vôlei',
+    accent: 'rgba(96, 165, 250, 0.8)',
+    glow: 'rgba(56, 189, 248, 0.5)',
+    gradient: 'radial-gradient(circle at 30% 30%, #f8fafc 0%, #dbeafe 18%, #93c5fd 35%, #2563eb 72%, #0f172a 100%)',
+  },
+  {
+    name: 'Beach Tennis',
+    accent: 'rgba(52, 211, 153, 0.8)',
+    glow: 'rgba(16, 185, 129, 0.5)',
+    gradient: 'radial-gradient(circle at 30% 30%, #f8fafc 0%, #ecfeff 18%, #bbf7d0 35%, #10b981 72%, #14532d 100%)',
+  },
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -18,6 +49,8 @@ const features = [
 ];
 
 export default function HomePage() {
+  const [content, setContent] = useState(defaultContent);
+  const [ballIndex, setBallIndex] = useState(0);
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -27,6 +60,31 @@ export default function HomePage() {
   });
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/home-content`);
+        if (!response.ok) return;
+        const data = await response.json();
+        setContent((prev) => ({ ...prev, ...data }));
+      } catch (error) {
+        console.error('Não foi possível carregar o conteúdo da home:', error);
+      }
+    };
+
+    loadContent();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBallIndex((current) => (current + 1) % ballStages.length);
+    }, 2200);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentBall = ballStages[ballIndex];
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -61,27 +119,27 @@ export default function HomePage() {
 
   return (
     <main className="overflow-hidden">
-      <section className="relative mx-auto max-w-7xl px-4 pb-12 pt-10 md:px-8">
-        <div className="hero-orb left-10 top-20 h-64 w-64 rounded-full bg-violet-500/50" />
-        <div className="hero-orb right-0 top-4 h-72 w-72 rounded-full bg-sky-500/40" />
+      <section className="brand-frame relative mx-auto max-w-7xl px-4 pb-12 pt-10 md:px-8">
+        <div className="hero-orb left-10 top-20 h-64 w-64" />
+        <div className="hero-orb right-0 top-4 h-72 w-72 border-[#30999d]" />
 
         <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.6 }}>
-            <Pill>Seu lugar preferido</Pill>
+            <Pill>{content.badge}</Pill>
             <h1 className="mt-6 max-w-xl text-5xl font-black tracking-[-0.08em] text-white md:text-7xl">
-              <span className="text-gradient">Arena01</span> é o seu lugar preferido para praticar futevôlei, beach tennis e vôlei.
+              <span className="text-gradient">Arena01</span> {content.title.replace('Arena01 ', '')}
             </h1>
             <p className="mt-6 max-w-xl text-lg text-slate-300">
-              Sua experiência premium em Jundiaí, Itatiba e Campinas, com energia, comunidade e alto nível em cada modalidade.
+              {content.description}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Link to="#captação" className="neon-button inline-flex items-center gap-2 rounded-full px-5 py-3 font-semibold text-white transition hover:scale-[1.02]">
-                Agendar visita
+                {content.cta_primary}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/loja" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white transition hover:border-violet-400/50 hover:bg-violet-500/10">
-                Ver loja
+                {content.cta_secondary}
               </Link>
             </div>
 
@@ -95,40 +153,49 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} className="relative">
             <div className="glass relative overflow-hidden rounded-[30px] border border-white/10 p-3 shadow-glow">
               <div className="grid-pattern h-[520px] rounded-[22px] bg-[#0a1223] p-4">
-                <div className="flex h-full flex-col justify-between rounded-[18px] border border-white/10 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs uppercase tracking-[0.2em] text-slate-200">Performance</span>
-                    <span className="text-xs text-emerald-300">+ 12k membros</span>
+                <div className="flex h-full flex-col items-center justify-center rounded-[18px] border border-white/10 bg-gradient-to-br from-violet-500/15 via-slate-950 to-sky-500/10 p-4">
+                  <div className="relative flex h-[360px] w-[360px] items-center justify-center">
+                    <div className="absolute h-[300px] w-[300px] rounded-full border border-white/10" style={{ boxShadow: `0 0 50px ${currentBall.glow}` }} />
+                    <div className="absolute h-[240px] w-[240px] rounded-full border border-white/10 bg-slate-950/30 blur-sm" />
+
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentBall.name}
+                        initial={{ opacity: 0, scale: 0.7, rotate: -30 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, rotate: 20 }}
+                        transition={{ duration: 0.7, ease: 'easeInOut' }}
+                        className="relative flex h-[220px] w-[220px] items-center justify-center rounded-full"
+                        style={{
+                          background: currentBall.gradient,
+                          boxShadow: `0 0 80px ${currentBall.glow}, inset -18px -18px 32px rgba(15, 23, 42, 0.5), inset 12px 12px 20px rgba(255,255,255,0.15)`,
+                        }}
+                      >
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+                          className="absolute inset-0 rounded-full border border-white/20"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.08, 1] }}
+                          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                          className="absolute inset-[18%] rounded-full border border-white/20"
+                        />
+                        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.8),transparent_18%)]" />
+                        <span className="relative rounded-full border border-white/20 bg-slate-950/35 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.38em] text-white backdrop-blur-md">
+                          {currentBall.name}
+                        </span>
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                      <div className="flex items-center justify-between text-sm text-slate-300">
-                        <span>Quadras Premium</span>
-                        <span className="text-violet-200">04</span>
-                      </div>
-                      <div className="mt-3 h-2 rounded-full bg-white/10">
-                        <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-violet-500 to-sky-400" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Unidades</p>
-                        <p className="mt-3 text-3xl font-black">3</p>
-                      </div>
-                      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Eventos</p>
-                        <p className="mt-3 text-3xl font-black">150+</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-violet-400/30 bg-violet-500/10 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-violet-200">Agenda</p>
-                    <div className="mt-2 flex items-center justify-between text-sm">
-                      <span>Treino aberto</span>
-                      <span className="font-semibold text-white">Sábado</span>
-                    </div>
+                  <div className="mt-4 flex gap-2">
+                    {ballStages.map((stage, index) => (
+                      <span
+                        key={stage.name}
+                        className={`h-2.5 w-2.5 rounded-full transition-all ${index === ballIndex ? 'bg-white shadow-[0_0_18px_rgba(255,255,255,0.9)]' : 'bg-white/25'}`}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -140,8 +207,8 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
         <SectionHeading
           eyebrow="Por que Arena01"
-          title="Uma marca premium desenhada para a cultura esportiva local"
-          description="Com tecnologia, conforto e identidade forte, a Arena01 nasceu para conectar pessoas, competição e comunidade em cada unidade."
+          title={content.section_title}
+          description={content.section_description}
         />
 
         <div className="grid gap-5 md:grid-cols-3">

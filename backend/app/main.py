@@ -8,12 +8,14 @@ from .auth import create_access_token, get_current_admin
 from .config import get_settings
 from .database import Base, engine, get_db
 from .email_service import send_contact_email
-from .models import AdminUser, Arena, Lead, Product
+from .models import AdminUser, Arena, HomeContent, Lead, Product
 from .schemas import (
     AdminLogin,
     AdminUserOut,
     ArenaCreate,
     ArenaOut,
+    HomeContentCreate,
+    HomeContentOut,
     LeadCreate,
     LeadOut,
     ProductCreate,
@@ -57,6 +59,17 @@ def list_arenas(db: Session = Depends(get_db)):
 @app.get("/products", response_model=list[ProductOut])
 def list_products(db: Session = Depends(get_db)):
     return db.query(Product).filter(Product.is_active.is_(True)).all()
+
+
+@app.get("/home-content", response_model=HomeContentOut)
+def get_home_content(db: Session = Depends(get_db)):
+    content = db.query(HomeContent).first()
+    if not content:
+        content = HomeContent()
+        db.add(content)
+        db.commit()
+        db.refresh(content)
+    return content
 
 
 @app.post("/contact", response_model=dict)
@@ -125,6 +138,34 @@ def create_product(payload: ProductCreate, db: Session = Depends(get_db), curren
     return product
 
 
+@app.get("/admin/home-content", response_model=HomeContentOut)
+def admin_get_home_content(db: Session = Depends(get_db), current_user: AdminUser = Depends(get_current_admin)):
+    del current_user
+    content = db.query(HomeContent).first()
+    if not content:
+        content = HomeContent()
+        db.add(content)
+        db.commit()
+        db.refresh(content)
+    return content
+
+
+@app.post("/admin/home-content", response_model=HomeContentOut)
+def update_home_content(payload: HomeContentCreate, db: Session = Depends(get_db), current_user: AdminUser = Depends(get_current_admin)):
+    del current_user
+    content = db.query(HomeContent).first()
+    if not content:
+        content = HomeContent()
+        db.add(content)
+
+    for field, value in payload.model_dump().items():
+        setattr(content, field, value)
+
+    db.commit()
+    db.refresh(content)
+    return content
+
+
 @app.get("/admin/arenas", response_model=list[ArenaOut])
 def admin_arenas(db: Session = Depends(get_db), current_user: AdminUser = Depends(get_current_admin)):
     del current_user
@@ -149,6 +190,19 @@ def root():
 @app.on_event("startup")
 def seed_demo_data():
     db = next(get_db())
+    if db.query(HomeContent).count() == 0:
+        db.add(
+            HomeContent(
+                badge="Seu lugar preferido",
+                title="Arena01 é o seu lugar preferido para praticar futevôlei, beach tennis e vôlei.",
+                description="Sua experiência premium em Jundiaí, Itatiba e Campinas, com energia, comunidade e alto nível em cada modalidade.",
+                cta_primary="Agendar visita",
+                cta_secondary="Ver loja",
+                section_title="Uma marca premium desenhada para a cultura esportiva local",
+                section_description="Com tecnologia, conforto e identidade forte, a Arena01 nasceu para conectar pessoas, competição e comunidade em cada unidade.",
+            )
+        )
+
     if db.query(Arena).count() == 0:
         arenas = [
             Arena(
